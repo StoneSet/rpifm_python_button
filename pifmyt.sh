@@ -1,0 +1,1 @@
+sudo /home/pi/PiFmAdv/src/pi_fm_adv --freq 105.10 --audio /home/pi/yt.wav --ps ST-PIFM --rt 'St-PIFM RADIO' --mpx 70 --power 7 --gpio 4 --preemph 'eu'  
