@@ -1,0 +1,1 @@
+sudo arecord -fS16_LE -r 44100 -Dplughw:1,0 -c 2 -  | sudo /home/pi/PiFmAdv/src/pi_fm_adv --audio -

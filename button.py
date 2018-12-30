@@ -10,16 +10,18 @@ import threading, time
 
 GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(14, GPIO.IN, pull_up_down = GPIO.PUD_DOWN)
-GPIO.setup(15, GPIO.IN)
-GPIO.setup(18, GPIO.IN)
-GPIO.setup(12, GPIO.IN)
-GPIO.setup(16, GPIO.OUT)
-GPIO.setup(21, GPIO.OUT)
-GPIO.setup(20, GPIO.OUT)
+GPIO.setup(14, GPIO.IN, pull_up_down = GPIO.PUD_DOWN) #Button 1 (Song player)
+GPIO.setup(15, GPIO.IN) #Button 2 (Song player)
+GPIO.setup(18, GPIO.IN) #Button 3 (Song player)
+GPIO.setup(19, GPIO.IN) #Jack switch
+GPIO.setup(12, GPIO.IN) #Stop button 
+GPIO.setup(16, GPIO.OUT) #Blinking led (when emitting)
+GPIO.setup(21, GPIO.OUT) #Sleep led
+GPIO.setup(20, GPIO.OUT) #Emiting led
 
 status = False
 blinking = False
+jack = False
 
 while True:
     if GPIO.input(14) == False:
@@ -28,7 +30,7 @@ while True:
         blinking = True
         GPIO.output(21,GPIO.LOW)
         GPIO.output(20,GPIO.HIGH)
-        print('--- FM - Started ---') 
+        print('--- FM - Started - BUTTON 1 PRESSED ---') 
         os.system('sudo screen -d -m -S fm sh /home/pi/pifmcc.sh')
     if GPIO.input(15) == False:
         status = True
@@ -36,7 +38,7 @@ while True:
         GPIO.output(21,GPIO.LOW)
         blinking = True
         GPIO.output(20,GPIO.HIGH)
-        print('--- FM - Started ---') 
+        print('--- FM - Started - BUTTON 2 PRESSED ---') 
         os.system('sudo screen -d -m -S fm sh /home/pi/pifmyt.sh')
     if GPIO.input(18) == False:
         status = True
@@ -44,16 +46,25 @@ while True:
         GPIO.output(21,GPIO.LOW)
         blinking = True
         GPIO.output(20,GPIO.HIGH)
-        print('--- FM - Started ---') 
+        print('--- FM - Started - BUTTON 3 PRESSED ---')
         os.system('sudo screen -d -m -S fm sh /home/pi/pifmph.sh') 
     if GPIO.input(12) == False:
         GPIO.output(20,GPIO.LOW)
         GPIO.output(21,GPIO.HIGH)
         #os.system('sudo screen -X -S fm kill')
         os.system('sudo killall screen')
-        print('fm killed')
+        print('--- FM - Stop playing - BUTTON STOP PRESSED ---')
         blinking = False
-        
+        jack = False
+    if GPIO.input(19) == True and jack == False:
+        status = True
+        GPIO.output(20,GPIO.LOW)
+        GPIO.output(21,GPIO.LOW)
+        blinking = True
+        GPIO.output(20,GPIO.HIGH)
+        print('--- FM - JACK INSERTED---') 
+        os.system('sudo screen -d -m -S fm sh /home/pi/pifmjack.sh')
+        jack = True
 
     if status == True:
         print('status on')
